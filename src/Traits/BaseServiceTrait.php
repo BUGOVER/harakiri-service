@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace HarakiriPattern\Traits;
+namespace HarakiriService\Traits;
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;

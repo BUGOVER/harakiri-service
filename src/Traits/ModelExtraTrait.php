@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Harakiri\Traits;
+namespace HarakiriService\Traits;
 
 /**
  * Class ModelExtraTrait

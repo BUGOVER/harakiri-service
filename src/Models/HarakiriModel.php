@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Harakiri\Models;
+namespace HarakiriService\Models;
 
 use Harakiri\Traits\ModelExtraTrait;
 use Illuminate\Database\Eloquent\Model;
