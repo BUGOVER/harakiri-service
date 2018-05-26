@@ -4,13 +4,8 @@
   "version": "0.0.1",
   "description": "Laravel small Service Pattern easy DI container with Interface",
   "keywords": [
-<<<<<<< HEAD
     "laravel service pattern",
     "customization"
-=======
-    "Laravel Service Pattern",
-    "Lumen Service Pattern"
->>>>>>> fixed
   ],
   "authors": [
     {
