@@ -210,6 +210,4 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
     {
         return $this->model->unsetConnectionResolver();
     }
-
-
 }
