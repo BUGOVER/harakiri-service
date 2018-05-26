@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use RuntimeException;
+use Illuminate\Support\Facades\App;
 
 /**
  * Class BaseService
@@ -60,7 +61,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
      */
     private function makeModel()
     {
-        $model = new ($this->model());
+        $model = App::make($this->model());
 
         if (!$model instanceof Model) {
             throw new RuntimeException("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
