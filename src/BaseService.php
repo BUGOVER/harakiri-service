@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace HarakiriService;
 
+use Exception;
 use HarakiriService\Contract\BaseCriteriaInterface;
 use HarakiriService\Contract\BaseServiceCriteriaInterface;
 use HarakiriService\Contract\BaseServiceInterface;
 use HarakiriService\Criteria\BaseCriteria;
 use HarakiriService\Traits\BaseServiceTrait;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use RuntimeException;
 use Illuminate\Support\Facades\App;
+use RuntimeException;
 
 /**
  * Class BaseService
@@ -124,9 +124,92 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
         return $this->model->getTable();
     }
 
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection|Model[]
+     */
     public function all()
     {
         return $this->model::all();
     }
+
+    /**
+     * @param $relations
+     * @return \Illuminate\Database\Eloquent\Builder|Model
+     */
+    public function with($relations)
+    {
+        return $this->model::with($relations);
+    }
+
+    /**
+     * @param null $connection
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function on($connection = null)
+    {
+        return $this->model->on($connection = null);
+    }
+
+    /**
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function onWriteConnection()
+    {
+        return $this->model->onWriteConnection();
+    }
+
+    /**
+     * @param $ids
+     * @return int
+     */
+    public function destroy($ids)
+    {
+        return $this->model->destroy($ids);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function query()
+    {
+        return $this->model->query();
+    }
+
+    /**
+     * @param null $connection
+     * @return mixed
+     */
+    public function resolveConnection($connection = null)
+    {
+        return $this->model->resolveRouteBinding($connection = null);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConnectionResolver()
+    {
+        return $this->model->getConnectionResolver();
+    }
+
+    /**
+     * @param ConnectionResolverInterface $resolver
+     * @return mixed
+     */
+    public function setConnectionResolver(ConnectionResolverInterface $resolver)
+    {
+        return $this->model->setConnectionResolver();
+    }
+
+    /**
+     * @param ConnectionResolverInterface $resolver
+     * @return mixed
+     */
+    public function unsetConnectionResolver(ConnectionResolverInterface $resolver)
+    {
+        return $this->model->unsetConnectionResolver();
+    }
+
 
 }
