@@ -45,7 +45,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
     /**
      * @return mixed
      */
-    abstract protected function model();
+    abstract protected function entity();
 
     /**
      * @return mixed
