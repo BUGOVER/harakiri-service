@@ -124,4 +124,9 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
         return $this->model->getTable();
     }
 
+    public function all()
+    {
+        return $this->model::all();
+    }
+
 }
