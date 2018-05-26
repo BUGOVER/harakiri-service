@@ -188,7 +188,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
      */
     public function destroy($ids)
     {
-        return $this->model->destroy($ids);
+        return $this->model::destroy($ids);
     }
 
     /**
