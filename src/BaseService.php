@@ -222,7 +222,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
      */
     public function setConnectionResolver(ConnectionResolverInterface $resolver)
     {
-        return $this->model->setConnectionResolver();
+        return $this->model->setConnectionResolver($resolver);
     }
 
     /**
@@ -231,7 +231,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
      */
     public function unsetConnectionResolver(ConnectionResolverInterface $resolver)
     {
-        return $this->model->unsetConnectionResolver();
+        return $this->model->unsetConnectionResolver($resolver);
     }
 
 }
