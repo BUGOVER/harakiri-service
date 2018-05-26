@@ -1,5 +1,5 @@
 {
-  "name": "harakiri/pattern",
+  "name": "harakiri/service",
   "license": "MIT",
   "version": "0.0.1",
   "description": "Laravel small Service Pattern easy DI container with Interface",
