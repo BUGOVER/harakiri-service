@@ -62,7 +62,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
      */
     private function makeModel()
     {
-        $model = App::make($this->model());
+        $model = App::make($this->entity());
 
         if (!$model instanceof Model) {
             throw new RuntimeException("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
