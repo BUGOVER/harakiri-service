@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace HarakiriService;
 
-use HarakiriPattern\Contract\BaseCriteriaInterface;
-use HarakiriPattern\Contract\BaseServiceCriteriaInterface;
-use HarakiriPattern\Contract\BaseServiceInterface;
-use HarakiriPattern\Criteria\BaseCriteria;
-use HarakiriPattern\Traits\BaseServiceTrait;
+use HarakiriService\Contract\BaseCriteriaInterface;
+use HarakiriService\Contract\BaseServiceCriteriaInterface;
+use HarakiriService\Contract\BaseServiceInterface;
+use HarakiriService\Criteria\BaseCriteria;
+use HarakiriService\Traits\BaseServiceTrait;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

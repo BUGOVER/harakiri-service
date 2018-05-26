@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace HarakiriService\Criteria\Where;
 
-use HarakiriPattern\Contract\BaseServiceInterface;
-use HarakiriPattern\Criteria\BaseCriteria;
+use HarakiriService\Contract\BaseServiceInterface;
+use HarakiriService\Criteria\BaseCriteria;
 
 /**
  * Class WhereCriteria

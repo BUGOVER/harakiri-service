@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace HarakiriService\Criteria;
 
-use HarakiriPattern\Contract\BaseCriteriaInterface;
-use HarakiriPattern\Traits\BaseCriteriaTrait;
+use HarakiriService\Contract\BaseCriteriaInterface;
+use HarakiriService\Traits\BaseCriteriaTrait;
 
 abstract class BaseCriteria implements BaseCriteriaInterface
 {

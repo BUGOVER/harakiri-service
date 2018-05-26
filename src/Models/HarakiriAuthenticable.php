@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace HarakiriService\Models;
 
-use Harakiri\Traits\ModelExtraTrait;
+use HarakiriService\Traits\ModelExtraTrait;
 use Illuminate\Foundation\Auth\User as Authenticable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
