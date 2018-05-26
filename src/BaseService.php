@@ -124,6 +124,29 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
         return $this->model->getTable();
     }
 
+    /**
+     * @param $column
+     * @param null $key
+     * @return mixed
+     */
+    public function lists($column, $key = null)
+    {
+        $this->applyCriteria();
+
+        return $this->model->lists($column, $key);
+    }
+
+    /**
+     * @param $column
+     * @param null $key
+     * @return mixed
+     */
+    public function pluck($column, $key = null)
+    {
+        $this->applyCriteria();
+
+        return $this->model->pluck($column, $key);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Collection|Model[]
@@ -210,4 +233,5 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
     {
         return $this->model->unsetConnectionResolver();
     }
+
 }
