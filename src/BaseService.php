@@ -9,6 +9,7 @@ use HarakiriService\Contract\BaseServiceCriteriaInterface;
 use HarakiriService\Contract\BaseServiceInterface;
 use HarakiriService\Criteria\BaseCriteria;
 use HarakiriService\Traits\BaseServiceTrait;
+use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
