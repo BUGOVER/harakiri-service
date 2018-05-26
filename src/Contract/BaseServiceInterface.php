@@ -5,5 +5,4 @@ namespace HarakiriService\Contract;
 
 interface BaseServiceInterface
 {
-    public function getTable();
 }
