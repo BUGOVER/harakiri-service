@@ -4,10 +4,8 @@ declare(strict_types=1);
 namespace HarakiriPattern;
 
 use Exception;
-use HarakiriPattern\Contract\BaseCriteriaInterface;
 use HarakiriPattern\Contract\BaseServiceCriteriaInterface;
 use HarakiriPattern\Contract\BaseServiceInterface;
-use HarakiriPattern\Criteria\BaseCriteria;
 use HarakiriPattern\Traits\BaseTrait;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Eloquent\Model;

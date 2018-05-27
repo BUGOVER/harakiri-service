@@ -8,20 +8,6 @@ use Illuminate\Database\ConnectionResolverInterface;
 interface BaseServiceInterface
 {
     /**
-     * @param $column
-     * @param null $key
-     * @return mixed
-     */
-    public function lists($column, $key = null);
-
-    /**
-     * @param $column
-     * @param null $key
-     * @return mixed
-     */
-    public function pluck($column, $key = null);
-
-    /**
      * @return mixed
      */
     public function all();

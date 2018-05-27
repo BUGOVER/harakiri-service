@@ -9,19 +9,4 @@ namespace HarakiriPattern\Contract;
  */
 interface BaseServiceCriteriaInterface
 {
-    /**
-     * @param $criteria
-     * @return mixed
-     */
-    public function pushCriteria($criteria);
-
-    /**
-     * @return mixed
-     */
-    public function resetCriteria();
-
-    /**
-     * @return mixed
-     */
-    public function applyCriteria();
 }
