@@ -26,7 +26,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
     /**
      * @var Model
      */
-    protected $model;
+    protected $service;
 
     /**
      * @var
@@ -69,7 +69,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
         }
         $this->modelQuery = $model->newQuery();
 
-        return $this->model = $model;
+        return $this->service = $model;
     }
 
     /**
@@ -122,117 +122,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
      */
     public function getTable()
     {
-        return $this->model->getTable();
-    }
-
-    /**
-     * @param $column
-     * @param null $key
-     * @return mixed
-     */
-    public function lists($column, $key = null)
-    {
-        $this->applyCriteria();
-
-        return $this->model->lists($column, $key);
-    }
-
-    /**
-     * @param $column
-     * @param null $key
-     * @return mixed
-     */
-    public function pluck($column, $key = null)
-    {
-        $this->applyCriteria();
-
-        return $this->model->pluck($column, $key);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection|Model[]
-     */
-    public function all()
-    {
-        return $this->model::all();
-    }
-
-    /**
-     * @param $relations
-     * @return \Illuminate\Database\Eloquent\Builder|Model
-     */
-    public function with($relations)
-    {
-        return $this->model::with($relations);
-    }
-
-    /**
-     * @param null $connection
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function on($connection = null)
-    {
-        return $this->model->on($connection = null);
-    }
-
-    /**
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function onWriteConnection()
-    {
-        return $this->model->onWriteConnection();
-    }
-
-    /**
-     * @param $ids
-     * @return int
-     */
-    public function destroy($ids)
-    {
-        return $this->model->destroy($ids);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function query()
-    {
-        return $this->model->query();
-    }
-
-    /**
-     * @param null $connection
-     * @return mixed
-     */
-    public function resolveConnection($connection = null)
-    {
-        return $this->model->resolveRouteBinding($connection = null);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getConnectionResolver()
-    {
-        return $this->model->getConnectionResolver();
-    }
-
-    /**
-     * @param ConnectionResolverInterface $resolver
-     * @return mixed
-     */
-    public function setConnectionResolver(ConnectionResolverInterface $resolver)
-    {
-        return $this->model->setConnectionResolver($resolver);
-    }
-
-    /**
-     * @param ConnectionResolverInterface $resolver
-     * @return mixed
-     */
-    public function unsetConnectionResolver(ConnectionResolverInterface $resolver)
-    {
-        return $this->model->unsetConnectionResolver($resolver);
+        return $this->service->getTable();
     }
 
 }
