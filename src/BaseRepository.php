@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
-use Torann\LaravelRepository\Contracts\BaseRepositoryContract;
+use HarakiriPattern\Contracts\BaseRepositoryContract;
 use HarakiriPattern\Exceptions\RepositoryException;
 use HarakiriPattern\Traits\Cacheable;
 
