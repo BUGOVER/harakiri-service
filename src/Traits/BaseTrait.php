@@ -1,15 +1,27 @@
 <?php
 declare(strict_types=1);
 
-namespace HarakiriService\Traits;
+namespace HarakiriPattern\Traits;
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
-trait BaseServiceTrait
+trait BaseTrait
 {
     /**
-     * BaseServiceTrait constructor.
+     * @var Collection
+     */
+    private $criteria;
+
+
+    /**
+     * @var Model
+     */
+    protected $model;
+
+    /**
+     * BaseTrait constructor.
      */
     public function __construct()
     {

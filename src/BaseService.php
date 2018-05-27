@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace HarakiriService;
+namespace HarakiriPattern;
 
 use Exception;
-use HarakiriService\Contract\BaseCriteriaInterface;
-use HarakiriService\Contract\BaseServiceCriteriaInterface;
-use HarakiriService\Contract\BaseServiceInterface;
-use HarakiriService\Criteria\BaseCriteria;
-use HarakiriService\Traits\BaseServiceTrait;
+use HarakiriPattern\Contract\BaseCriteriaInterface;
+use HarakiriPattern\Contract\BaseServiceCriteriaInterface;
+use HarakiriPattern\Contract\BaseServiceInterface;
+use HarakiriPattern\Criteria\BaseCriteria;
+use HarakiriPattern\Traits\BaseTrait;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -21,27 +21,12 @@ use RuntimeException;
  */
 abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaInterface
 {
-    use BaseServiceTrait;
-
-    /**
-     * @var Model
-     */
-    protected $model;
+    use BaseTrait;
 
     /**
      * @var
      */
     private $modelQuery;
-
-    /**
-     * @var Collection
-     */
-    private $criteria;
-
-    /**
-     * @var
-     */
-    private $skipCriteria;
 
     /**
      * @return mixed
@@ -60,7 +45,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
      * @return Model|mixed
      * @throws Exception
      */
-    private function makeModel()
+    protected function makeModel()
     {
         $model = App::make($this->entity());
 
@@ -70,83 +55,6 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
         $this->modelQuery = $model->newQuery();
 
         return $this->model = $model;
-    }
-
-    /**
-     * @param $criteria
-     * @return $this
-     */
-    public function pushCriteria($criteria)
-    {
-        if (\is_string($criteria)) {
-            $criteria = new $criteria;
-        }
-        if (!$criteria instanceof BaseCriteriaInterface) {
-            throw new RuntimeException('Class ' . \get_class($criteria) . " must be an instance of BugOver\\Repository\\Contracts\\CriteriaInterface");
-        }
-        $this->criteria->push($criteria);
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function applyCriteria()
-    {
-        if ($this->skipCriteria === true) {
-            return $this;
-        }
-
-        foreach ($this->getCriteria() as $criteria) {
-            if ($criteria instanceof BaseCriteria) {
-                $this->modelQuery = $criteria->apply($this->modelQuery, $this);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return $this|mixed
-     */
-    public function resetCriteria()
-    {
-        $this->criteria = new Collection();
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTable()
-    {
-        return $this->model->getTable();
-    }
-
-    /**
-     * @param $column
-     * @param null $key
-     * @return mixed
-     */
-    public function lists($column, $key = null)
-    {
-        $this->applyCriteria();
-
-        return $this->model->lists($column, $key);
-    }
-
-    /**
-     * @param $column
-     * @param null $key
-     * @return mixed
-     */
-    public function pluck($column, $key = null)
-    {
-        $this->applyCriteria();
-
-        return $this->model->pluck($column, $key);
     }
 
     /**

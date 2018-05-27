@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace HarakiriService\Models;
+namespace HarakiriPattern\Models;
 
-use HarakiriService\Traits\BaseModelTrait;
+use HarakiriPattern\Traits\BaseModelTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**

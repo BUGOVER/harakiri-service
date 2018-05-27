@@ -1,6 +1,6 @@
 <?php
 
-namespace HarakiriService\Exceptions;
+namespace HarakiriPattern\Exceptions;
 
 class ServiceException extends \Exception
 {

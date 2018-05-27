@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace HarakiriService\Contract;
+namespace HarakiriPattern\Contract;
 
 /**
  * Interface BaseCriteriaInterface
