@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace HarakiriService\Models;
 
-use HarakiriService\Traits\ModelExtraTrait;
+use HarakiriService\Traits\BaseModelTrait;
 use Illuminate\Foundation\Auth\User as Authenticable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -14,7 +14,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  */
 class HarakiriAuthenticable extends Authenticable implements JWTSubject
 {
-    use Notifiable, ModelExtraTrait;
+    use Notifiable, BaseModelTrait;
 
 
     /**

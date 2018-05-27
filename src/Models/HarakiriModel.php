@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace HarakiriService\Models;
 
-use HarakiriService\Traits\ModelExtraTrait;
+use HarakiriService\Traits\BaseModelTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,5 +12,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class HarakiriModel extends Model
 {
-    use ModelExtraTrait;
+    use BaseModelTrait;
 }
