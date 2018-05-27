@@ -251,7 +251,7 @@ abstract class BaseRepository implements BaseRepositoryContract
         $this->newQuery();
 
         // Perform where in
-        if (is_array($value)) {
+        if (\is_array($value)) {
             return $this->query->whereIn($attribute, $value)->get($columns);
         }
 
@@ -271,7 +271,7 @@ abstract class BaseRepository implements BaseRepositoryContract
         $this->newQuery();
 
         foreach ($where as $field => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 list($field, $condition, $val) = $value;
                 $this->query->where($field, $condition, $val);
             } else {
@@ -293,7 +293,7 @@ abstract class BaseRepository implements BaseRepositoryContract
     public function orderBy($column, $direction)
     {
         // Ensure the sort is valid
-        if (in_array($column, $this->orderable) === false
+        if (\in_array($column, $this->orderable) === false
             && array_key_exists($column, $this->orderable) === false
         ) {
             return $this;
@@ -305,7 +305,7 @@ abstract class BaseRepository implements BaseRepositoryContract
         return $this->addScopeQuery(function ($query) use ($column, $direction) {
 
             // Get valid sort order
-            $direction = in_array(strtolower($direction), ['desc', 'asc']) ? $direction : 'asc';
+            $direction = \in_array(strtolower($direction), ['desc', 'asc']) ? $direction : 'asc';
 
             // Check for table column mask
             $column = Arr::get($this->orderable, $column, $column);
@@ -322,7 +322,7 @@ abstract class BaseRepository implements BaseRepositoryContract
     public function getSearchableKeys()
     {
         return array_values(array_map(function ($value, $key) {
-            return (is_array($value) || is_numeric($key) === false) ? $key : $value;
+            return (\is_array($value) || is_numeric($key) === false) ? $key : $value;
         }, $this->searchable, array_keys($this->searchable)));
     }
 
@@ -336,7 +336,7 @@ abstract class BaseRepository implements BaseRepositoryContract
     public function search($queries)
     {
         // Adjust for simple search queries
-        if (is_string($queries)) {
+        if (\is_string($queries)) {
             $queries = [
                 'query' => $queries,
             ];
@@ -391,7 +391,7 @@ abstract class BaseRepository implements BaseRepositoryContract
                 }
 
                 // Create standard query
-                if (count($columns) > 1) {
+                if (\count($columns) > 1) {
                     $query->where(function ($q) use ($columns, $param, $value) {
                         foreach ($columns as $column) {
                             $this->createSearchClause($q, $param, $column, $value, 'or');
@@ -467,7 +467,7 @@ abstract class BaseRepository implements BaseRepositoryContract
 
         $lists = $this->query->pluck($value, $key);
 
-        if (is_array($lists)) {
+        if (\is_array($lists)) {
             return $lists;
         }
 
@@ -637,7 +637,7 @@ abstract class BaseRepository implements BaseRepositoryContract
     protected function applyScope()
     {
         foreach ($this->scopeQuery as $callback) {
-            if (is_callable($callback)) {
+            if (\is_callable($callback)) {
                 $this->query = $callback($this->query);
             }
         }
@@ -761,7 +761,7 @@ abstract class BaseRepository implements BaseRepositoryContract
 
         // Perform a range based query if the range is valid
         // and the separator matches.
-        if (substr($value, 2, 1) === ':' && in_array($range_type, $this->range_keys)) {
+        if (substr($value, 2, 1) === ':' && \in_array($range_type, $this->range_keys)) {
             // Get the true value
             $value = substr($value, 3);
 
@@ -777,7 +777,7 @@ abstract class BaseRepository implements BaseRepositoryContract
                     break;
                 case 'bt':
                     // Because this can only have two values
-                    if (count($values = explode(',', $value)) === 2) {
+                    if (\count($values = explode(',', $value)) === 2) {
                         $query->whereBetween($this->appendTableName($columns[0]), $values);
                     }
                     break;
@@ -801,10 +801,10 @@ abstract class BaseRepository implements BaseRepositoryContract
     {
         // Check for scope method and call
         if (method_exists($this, $scope = 'scope' . ucfirst($method))) {
-            return call_user_func_array([$this, $scope], $parameters);
+            return \call_user_func_array([$this, $scope], $parameters);
         }
 
-        $className = get_class($this);
+        $className = \get_class($this);
 
         throw new BadMethodCallException("Call to undefined method {$className}::{$method}()");
     }
