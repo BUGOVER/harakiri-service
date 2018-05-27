@@ -1,6 +1,6 @@
 <?php
 
-namespace Torann\LaravelRepository\Contracts;
+namespace HarakiriPattern\Contracts;
 
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
