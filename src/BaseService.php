@@ -1,16 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace HarakiriPattern;
+namespace App\Components\ServiceLayer;
 
+use App\Components\ServiceLayer\Contract\BaseCriteriaInterface;
+use App\Components\ServiceLayer\Contract\BaseServiceCriteriaInterface;
+use App\Components\ServiceLayer\Contract\BaseServiceInterface;
+use App\Components\ServiceLayer\Criteria\BaseCriteria;
+use App\Components\ServiceLayer\Traits\BaseServiceTrait;
 use Exception;
-use HarakiriPattern\Contract\BaseServiceCriteriaInterface;
-use HarakiriPattern\Contract\BaseServiceInterface;
-use HarakiriPattern\Traits\BaseTrait;
-use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\MessageBag;
 use RuntimeException;
 
 /**
@@ -19,12 +22,42 @@ use RuntimeException;
  */
 abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaInterface
 {
-    use BaseTrait;
+    use BaseServiceTrait;
+
+    /**
+     * @var Model
+     */
+    protected $service;
+
+    /**
+     * @var Collection
+     */
+    private $criteria;
 
     /**
      * @var
      */
-    private $modelQuery;
+    private $skipCriteria;
+
+    /**
+     * @var array
+     */
+    protected $orderBy = [];
+
+    /**
+     * @var bool
+     */
+    protected $skipOrderingOnce = false;
+
+    /**
+     * @var
+     */
+    protected $query;
+
+    /**
+     * @var array
+     */
+    protected $scopeQuery = [];
 
     /**
      * @return mixed
@@ -43,102 +76,162 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
      * @return Model|mixed
      * @throws Exception
      */
-    protected function makeModel()
+    private function makeModel()
     {
         $model = App::make($this->entity());
 
         if (!$model instanceof Model) {
             throw new RuntimeException("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
         }
-        $this->modelQuery = $model->newQuery();
+        $this->query = $model->newQuery();
 
-        return $this->model = $model;
+        return $this->service = $model;
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|Model[]
+     * @param $criteria
+     * @return $this
      */
-    public function all()
+    public function pushCriteria($criteria)
     {
-        return $this->model::all();
+        if (\is_string($criteria)) {
+            $criteria = new $criteria;
+        }
+        if (!$criteria instanceof BaseCriteriaInterface) {
+            throw new RuntimeException('Class ' . \get_class($criteria) . " must be an instance of BugOver\\Repository\\Contracts\\CriteriaInterface");
+        }
+        $this->criteria->push($criteria);
+
+        return $this;
     }
 
     /**
-     * @param $relations
-     * @return \Illuminate\Database\Eloquent\Builder|Model
+     * @return $this
      */
-    public function with($relations)
+    public function applyCriteria()
     {
-        return $this->model::with($relations);
+        if ($this->skipCriteria === true) {
+            return $this;
+        }
+
+        foreach ($this->getCriteria() as $criteria) {
+            if ($criteria instanceof BaseCriteria) {
+                $this->query = $criteria->apply($this->query, $this);
+            }
+        }
+
+        return $this;
     }
 
     /**
-     * @param null $connection
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return $this|mixed
      */
-    public function on($connection = null)
+    public function resetCriteria()
     {
-        return $this->model->on($connection = null);
+        $this->criteria = new Collection();
+
+        return $this;
     }
 
     /**
-     * @return \Illuminate\Database\Query\Builder
+     * @return string
      */
-    public function onWriteConnection()
+    public function getTable()
     {
-        return $this->model->onWriteConnection();
+        return $this->service->getTable();
     }
 
+
+    /*=============================== Custom METHODS ELOQUENT ==========================*/
+
     /**
-     * @param $ids
-     * @return int
+     * Apply scope in current Query
+     *
+     * @return $this
      */
-    public function destroy($ids)
+    protected function applyScope()
     {
-        return $this->model->destroy($ids);
+        foreach ($this->scopeQuery as $callback) {
+            if (\is_callable($callback)) {
+                $this->query = $callback($this->query);
+            }
+        }
+
+        // Clear scopes
+        $this->scopeQuery = [];
+
+        return $this;
     }
 
     /**
+     * @param array $attributes
+     * @return Model
+     */
+    public function getNew(array $attributes = [])
+    {
+        $this->errors = new MessageBag();
+
+        return $this->service->newInstance($attributes);
+    }
+
+    /**
+     * Reset internal Query
+     *
+     * @return $this
+     */
+    protected function scopeReset()
+    {
+        $this->scopeQuery = [];
+
+        $this->query = $this->newQuery();
+
+        return $this;
+    }
+
+    /**
+     * @param bool $skipOrdering
+     * @return $this
+     */
+    public function newQuery($skipOrdering = false)
+    {
+        $this->query = $this->getNew()->newQuery();
+        // Apply order by
+        if ($skipOrdering === false && $this->skipOrderingOnce === false) {
+            foreach ($this->orderBy as $column => $dir) {
+                $this->query->orderBy($column, $dir);
+            }
+        }
+        // Reset the one time skip
+        $this->skipOrderingOnce = false;
+        $this->applyScope();
+        return $this;
+    }
+
+    /**
+     * @param $id
+     * @param array $columns
      * @return mixed
      */
-    public function query()
+    public function find($id, $columns = ['*'])
     {
-        return $this->model->query();
+        $this->newQuery();
+        return $this->query->find($id, $columns);
     }
 
     /**
-     * @param null $connection
+     * @param $id
+     * @param array $columns
      * @return mixed
      */
-    public function resolveConnection($connection = null)
+    public function findOrFail($id, $columns = ['*'])
     {
-        return $this->model->resolveRouteBinding($connection = null);
-    }
+        $this->newQuery();
 
-    /**
-     * @return mixed
-     */
-    public function getConnectionResolver()
-    {
-        return $this->model->getConnectionResolver();
-    }
+        if ($result = $this->query->find($id, $columns)) {
+            return $result;
+        }
 
-    /**
-     * @param ConnectionResolverInterface $resolver
-     * @return mixed
-     */
-    public function setConnectionResolver(ConnectionResolverInterface $resolver)
-    {
-        return $this->model->setConnectionResolver($resolver);
-    }
-
-    /**
-     * @param ConnectionResolverInterface $resolver
-     * @return mixed
-     */
-    public function unsetConnectionResolver(ConnectionResolverInterface $resolver)
-    {
-        return $this->model->unsetConnectionResolver($resolver);
+        throw (new ModelNotFoundException)->setModel($this->service);
     }
 
 }
