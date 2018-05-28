@@ -3,16 +3,17 @@ declare(strict_types=1);
 
 namespace HarakiriService;
 
-use Exception;
 use HarakiriService\Contract\BaseCriteriaInterface;
 use HarakiriService\Contract\BaseServiceCriteriaInterface;
 use HarakiriService\Contract\BaseServiceInterface;
 use HarakiriService\Criteria\BaseCriteria;
 use HarakiriService\Traits\BaseServiceTrait;
-use Illuminate\Database\ConnectionResolverInterface;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\MessageBag;
 use RuntimeException;
 
 /**
@@ -29,11 +30,6 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
     protected $service;
 
     /**
-     * @var
-     */
-    private $modelQuery;
-
-    /**
      * @var Collection
      */
     private $criteria;
@@ -42,6 +38,26 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
      * @var
      */
     private $skipCriteria;
+
+    /**
+     * @var array
+     */
+    protected $orderBy = [];
+
+    /**
+     * @var bool
+     */
+    protected $skipOrderingOnce = false;
+
+    /**
+     * @var
+     */
+    protected $query;
+
+    /**
+     * @var array
+     */
+    protected $scopeQuery = [];
 
     /**
      * @return mixed
@@ -67,7 +83,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
         if (!$model instanceof Model) {
             throw new RuntimeException("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
         }
-        $this->modelQuery = $model->newQuery();
+        $this->query = $model->newQuery();
 
         return $this->service = $model;
     }
@@ -100,7 +116,7 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
 
         foreach ($this->getCriteria() as $criteria) {
             if ($criteria instanceof BaseCriteria) {
-                $this->modelQuery = $criteria->apply($this->modelQuery, $this);
+                $this->query = $criteria->apply($this->query, $this);
             }
         }
 
@@ -123,6 +139,99 @@ abstract class BaseService implements BaseServiceInterface, BaseServiceCriteriaI
     public function getTable()
     {
         return $this->service->getTable();
+    }
+
+
+    /*=============================== Custom METHODS ELOQUENT ==========================*/
+
+    /**
+     * Apply scope in current Query
+     *
+     * @return $this
+     */
+    protected function applyScope()
+    {
+        foreach ($this->scopeQuery as $callback) {
+            if (\is_callable($callback)) {
+                $this->query = $callback($this->query);
+            }
+        }
+
+        // Clear scopes
+        $this->scopeQuery = [];
+
+        return $this;
+    }
+
+    /**
+     * @param array $attributes
+     * @return Model
+     */
+    public function getNew(array $attributes = [])
+    {
+        $this->errors = new MessageBag();
+
+        return $this->service->newInstance($attributes);
+    }
+
+    /**
+     * Reset internal Query
+     *
+     * @return $this
+     */
+    protected function scopeReset()
+    {
+        $this->scopeQuery = [];
+
+        $this->query = $this->newQuery();
+
+        return $this;
+    }
+
+    /**
+     * @param bool $skipOrdering
+     * @return $this
+     */
+    public function newQuery($skipOrdering = false)
+    {
+        $this->query = $this->getNew()->newQuery();
+        // Apply order by
+        if ($skipOrdering === false && $this->skipOrderingOnce === false) {
+            foreach ($this->orderBy as $column => $dir) {
+                $this->query->orderBy($column, $dir);
+            }
+        }
+        // Reset the one time skip
+        $this->skipOrderingOnce = false;
+        $this->applyScope();
+        return $this;
+    }
+
+    /**
+     * @param $id
+     * @param array $columns
+     * @return mixed
+     */
+    public function find($id, $columns = ['*'])
+    {
+        $this->newQuery();
+        return $this->query->find($id, $columns);
+    }
+
+    /**
+     * @param $id
+     * @param array $columns
+     * @return mixed
+     */
+    public function findOrFail($id, $columns = ['*'])
+    {
+        $this->newQuery();
+
+        if ($result = $this->query->find($id, $columns)) {
+            return $result;
+        }
+
+        throw (new ModelNotFoundException)->setModel($this->service);
     }
 
 }
